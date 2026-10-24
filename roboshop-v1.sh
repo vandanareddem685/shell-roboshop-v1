@@ -33,8 +33,9 @@ do
             --query 'Reservations[].Instances[].PrivateIpAddress' \
             --output text
         )
-    fi
+    
         r53_record=$domain_name
+    fi
     #update r53_record
     aws route53 change-resource-record-sets \
     --hosted-zone-id "$hosted_zone_id" \
@@ -55,4 +56,6 @@ do
             }
         ]
     }' 
+
+    echo "updataed r53 record for $instance"
 done
