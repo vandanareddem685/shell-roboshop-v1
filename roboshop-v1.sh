@@ -16,5 +16,6 @@ do
         --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=roboshop-$instance}]" \
         --query 'Instances[0].InstanceId' \
         --output text
+    echo "instance_id=$instance_id"
     )
 done
