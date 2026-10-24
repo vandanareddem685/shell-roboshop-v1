@@ -33,6 +33,7 @@ do
             --query 'Reservations[].Instances[].PrivateIpAddress' \
             --output text
         )
+    fi
         r53_record=$domain_name
     #update r53_record
     aws route53 change-resource-record-sets \
