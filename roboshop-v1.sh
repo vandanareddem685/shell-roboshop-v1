@@ -20,7 +20,7 @@ do
 
     echo "InstanceId=$instance_id"
 
-    if [ $instance !="frontend" ];then
+    if [ $instance != "frontend" ];then
        IP=$(aws ec2 describe-instances \
             --instance-ids i-0ce78896fbffb0a07 \
             --query 'Reservations[].Instances[].PrivateIpAddress' \
@@ -39,25 +39,24 @@ do
 
     echo "Record:$r53_record"
     #update r53_record
-    aws route53 change-resource-record-sets \
+    echo "Record: ${r53_record}"
+
+aws route53 change-resource-record-sets \
     --hosted-zone-id "$hosted_zone_id" \
     --change-batch '{
         "Changes": [
             {
                 "Action": "UPSERT",
                 "ResourceRecordSet": {
-                    "Name": "r53_record",
+                    "Name": "'$r53_record'",
                     "Type": "A",
                     "TTL": 1,
-                    "ResourceRecords": [
-                        {
-                            "Value": "$IP"
-                        }
-                    ]
+                    "ResourceRecords": [{"Value": "'$IP'"}]
                 }
             }
         ]
-    }' 
+    }'
 
-    echo "updataed r53 record for $instance"
+echo "Updated R53 record for $instance"
+
 done
