@@ -17,7 +17,7 @@ fi
 mkdir -p $logs_folder
 
 timestamp(){
-    date + "%F" "%T"
+    date +"%F %T"
 }
 
 validate(){
@@ -37,3 +37,8 @@ dnf install redis -y
 validate $? "Installing redis"
 
 sed -i -e 's/^bind 127.0.0.1/bind 0.0.0.0/' -e 's/^protected-mode yes/protected-mode no/' /etc/redis/redis.conf
+validate $? "Allowing remote connections to redis"
+
+systemctl enable redis
+systemctl start redis
+validate $? "Enable and start redis"
