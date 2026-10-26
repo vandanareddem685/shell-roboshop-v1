@@ -36,9 +36,12 @@ dnf module enable redis:7 -y &>> $logs_file
 dnf install redis -y &>> $logs_file
 validate $? "Installing redis"
 
-sed -i -e 's/^bind 127.0.0.1/bind 0.0.0.0/' -e 's/^protected-mode yes/protected-mode no/' /etc/redis/redis.conf $logs_file
+sed -i -e 's/^bind 127.0.0.1/bind 0.0.0.0/' -e 's/^protected-mode yes/protected-mode no/' /etc/redis/redis.conf &>> $logs_file
 validate $? "Allowing remote connections to redis"
 
 systemctl enable redis
 systemctl start redis
 validate $? "Enable and start redis"
+
+echo "$(timestamp)[INFO] Script completed in $SECONDS"
+echo "$(timestamp)[INFO] === Script completed excecution ==="
