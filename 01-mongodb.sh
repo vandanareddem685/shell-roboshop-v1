@@ -1,7 +1,7 @@
 #!/bin/bash
 
 user_id=$(id -u)
-logs_folder="/var/log/shell-practice"
+logs_folder="/var/log/roboshop"
 logs_file="${logs_folder}/${0}.log"
 
 R="\e[31m"
@@ -27,13 +27,13 @@ validate(){
     fi
 }
 
-cp mongo.repo /etc/yum.repos.d/mongo.repo
+cp mongo.repo /etc/yum.repos.d/mongo.repo &>> $logs_file
 validate $? "Adding mongo repo"
 
-dnf install mongodb-org -y
+dnf install mongodb-org -y &>> $logs_file
 validate $? "Installing mongodb repo"
 
-systemctl enable mongod
-systemctl start mongod
+systemctl enable mongod &>> $logs_file
+systemctl start mongod &>> $logs_file
 validate $? "Enabling and starting mongodb"
 
