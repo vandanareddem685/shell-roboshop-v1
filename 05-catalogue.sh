@@ -86,7 +86,7 @@ else
 fi
 
 systemctl restart catalogue
-validate $? "Restarting catalogue"
+validate $? "Restarting Catalogue"
 
 echo "$(timestamp)[INFO] Script completed in $SECONDS seconds" | tee -a $logs_file
 echo "$(timestamp)[INFO] === Script completed excecution ===" | tee -a $logs_file
