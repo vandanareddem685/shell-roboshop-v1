@@ -70,5 +70,8 @@ systemctl enable cart &>> $logs_file
 systemctl start cart &>> $logs_file
 validate $? "Starting and enabling cart"
 
+systemctl restart cart
+validate $? "Restarting cart"
+
 echo "$(timestamp) [INFO] Script completed in $SECONDS seconds"
 echo "$(timestamp) [INFO] ==== Script completed Execution =====" | tee -a $logs_file
