@@ -3,9 +3,8 @@
 user_id=$(id -u)
 logs_folder="/var/log/roboshop"
 logs_file="${logs_folder}/${0}.log"
-domain_name="practicedaws92s.online"
+domain_name="daws92s.store"
 scripts_dir=$(dirname "$(realpath "$0")")
-
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
@@ -19,19 +18,19 @@ fi
 mkdir -p $logs_folder
 
 timestamp(){
-    date +"%F %T"
+    date "+%F %T" 
 }
 
 validate(){
     if [ $1 -ne 0 ]; then
-        echo -e "$(timestamp) [ERROR] ${2}..$R FAILED $N" | tee -a $logs_file
+        echo -e "$(timestamp) [ERROR] ${2}..${R}FAILED${N}" | tee -a $logs_file
         exit 1
     else
-        echo -e "$(timestamp) [INFO] ${2}..$G SUCCESS $N" | tee -a $logs_file
+        echo -e "$(timestamp) [INFO] ${2}..${G}SUCCESS${N}" | tee -a $logs_file
     fi
 }
 
-echo "$(timestamp)[INFO]===Script started execution ===" | tee -a $logs_file
+echo "$(timestamp) [INFO] ==== Script started Execution =====" | tee -a $logs_file
 
 dnf module disable nodejs -y &>> $logs_file
 dnf module enable nodejs:24 -y &>> $logs_file
@@ -39,18 +38,18 @@ dnf install nodejs -y &>> $logs_file
 validate $? "Installing nodejs 24"
 
 id roboshop &>> $logs_file
-if [ $? -ne 0 ];then
-    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
+if [ $? -ne 0 ]; then
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>> $logs_file
     validate $? "Creating system user"
 else
-    echo -e "$(timestamp)[INFO] System user already exists ${Y}SKIPPING${N}"
+    echo -e "$(timestamp) [INFO] System user roboshop already exist...${Y}SKIPPING${N}"
 fi
 
 rm -rf /app
-validate $? "removing old code"
+validate $? "Removing old code"
 
 mkdir -p /app
-validate $? "Creating app dir"
+validate $? "Creating app directory"
 
 curl -L -o /tmp/catalogue.zip https://raw.githubusercontent.com/daws-92s/roboshop-documentation/refs/heads/main/artifacts/catalogue-v4.zip &>> $logs_file
 validate $? "Downloading catalogue"
@@ -62,17 +61,16 @@ validate $? "Unzipping catalogue"
 npm install &>> $logs_file
 validate $? "Installing dependencies"
 
-sed -i "s/DOMAIN_NAME/$domain_name/g" $scripts_dir/catalogue.service
-cp $scripts_dir/catalogue.service /etc/systemd/system/catalogue.service
-validate $? "Copying catalogue service file"
+sed -i "s/DOMAIN_NAME/$domain_name/g" "$scripts_dir/catalogue.service"
+cp "$scripts_dir/catalogue.service" /etc/systemd/system/catalogue.service
 
-systemctl daemon-reload
-systemctl enable catalogue
-systemctl start catalogue
-validate $? "start and enable catalogue"
+systemctl daemon-reload &>> $logs_file
+systemctl enable catalogue &>> $logs_file
+systemctl start catalogue &>> $logs_file
+validate $? "Starting and enabling catalogue"
 
-cp scripts_dir/mongo.repo /etc/yum.repos.d/mongo.repo
-validate $? "adding mongo repo"
+cp "$scripts_dir/mongo.repo" /etc/yum.repos.d/mongo.repo
+validate $? "Adding Mongo repo"
 
 dnf install mongodb-mongosh -y &>> $logs_file
-validate $? "installing mongodb client"
+validate $? "Installing MongoDB Client"
