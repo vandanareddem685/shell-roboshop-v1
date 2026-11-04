@@ -4,6 +4,7 @@ user_id=$(id -u)
 logs_folder="/var/log/roboshop"
 logs_file="${logs_folder}/${0}.log"
 domain_name="practicedaws92s.online"
+scripts_dir=$(dirname "$(realpath "$0")")
 
 R="\e[31m"
 G="\e[32m"
@@ -58,8 +59,8 @@ validate $? "Unzipping catalogue"
 npm install &>> $logs_file
 validate $? "Installing dependencies"
 
-sed -i "s/DOMAIN_NAME/$domain_name/g" catalogue.service
-cp catalogue.service /etc/systemd/system/catalogue.service
+sed -i "s/DOMAIN_NAME/$domain_name/g" scripts_dir/catalogue.service
+cp scripts_dir/catalogue.service /etc/systemd/system/catalogue.service
 validate $? "Copying catalogue service file"
 
 systemctl daemon-reload
