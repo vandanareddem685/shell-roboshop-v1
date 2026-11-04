@@ -70,7 +70,7 @@ systemctl enable user &>> $logs_file
 systemctl start user &>> $logs_file
 validate $? "Starting and enabling user"
 
-systemctl restart user &>> $logs_file
+systemctl restart user
 validate $? "Restarting user"
 
 echo "$(timestamp) [INFO] Script completed in $SECONDS seconds"
