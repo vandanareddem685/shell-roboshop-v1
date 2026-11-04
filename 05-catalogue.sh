@@ -74,3 +74,6 @@ validate $? "Adding Mongo repo"
 
 dnf install mongodb-mongosh -y &>> $logs_file
 validate $? "Installing MongoDB Client"
+
+mongosh --host mongodb.$domain_name </app/db/master-data.js
+validate $? "Loading products"
