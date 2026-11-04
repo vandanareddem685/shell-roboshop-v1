@@ -3,6 +3,7 @@
 user_id=$(id -u)
 logs_folder="/var/log/roboshop"
 logs_file="${logs_folder}/${0}.log"
+domain_name="practicedaws92s.online"
 
 R="\e[31m"
 G="\e[32m"
@@ -36,10 +37,32 @@ dnf module enable nodejs:24 -y &>> $logs_file
 dnf install nodejs -y &>> $logs_file
 validate $? "Installing nodejs 24"
 
-id roboshop
+id roboshop &>> $logs_file
 if [ $? -ne 0 ];then
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
     validate $? "Creating system user"
 else
     echo -e "System user already exists ${Y}SKIPPING${N}"
 fi
+
+mkdir -p /app
+validate $? "Creating app dir"
+
+curl -L -o /tmp/catalogue.zip https://raw.githubusercontent.com/daws-92s/roboshop-documentation/refs/heads/main/artifacts/catalogue-v4.zip &>> $logs_file
+validate $? "Downloading catalogue"
+
+cd /app
+unzip /tmp/catalogue.zip &>> $logs_file
+validate $? "Unzipping catalogue"
+
+npm install &>> $logs_file
+validate $? "Installing dependencies"
+
+sed -i "s/DOMAIN_NAME/$domain_name/g" catalogue.service
+cp catalogue.service /etc/systemd/system/catalogue.service
+validate $? "Copying catalogue service file"
+
+systemctl daemon-reload
+systemctl enable catalogue
+systemctl start catalogue
+validate $? "start and enable catalogue"
