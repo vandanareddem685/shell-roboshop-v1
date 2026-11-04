@@ -31,9 +31,9 @@ validate(){
 
 echo "$(timestamp)[INFO]===Script started execution ===" | tee -a $logs_file
 
-dnf module disable nodejs -y
-dnf module enable nodejs:24 -y
-dnf install nodejs -y
+dnf module disable nodejs -y &>> $logs_file
+dnf module enable nodejs:24 -y &>> $logs_file
+dnf install nodejs -y &>> $logs_file
 validate $? "Installing nodejs 24"
 
 useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
