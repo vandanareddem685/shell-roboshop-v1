@@ -43,8 +43,11 @@ if [ $? -ne 0 ];then
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
     validate $? "Creating system user"
 else
-    echo -e "System user already exists ${Y}SKIPPING${N}"
+    echo -e "$(timestamp)[INFO] System user already exists ${Y}SKIPPING${N}"
 fi
+
+rm -rf /app
+validate $? "removing old code"
 
 mkdir -p /app
 validate $? "Creating app dir"
@@ -67,3 +70,9 @@ systemctl daemon-reload
 systemctl enable catalogue
 systemctl start catalogue
 validate $? "start and enable catalogue"
+
+cp scripts_dir/mongo.repo /etc/yum.repos.d/mongo.repo
+validate $? "adding mongo repo"
+
+dnf install mongodb-mongosh -y &>> $logs_file
+validate $? "installing mongodb client"
