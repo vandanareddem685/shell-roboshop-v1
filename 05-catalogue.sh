@@ -17,7 +17,7 @@ fi
 
 mkdir -p $logs_folder
 
-timestamp(){
+timestamp(){  
     date "+%F %T" 
 }
 
@@ -85,7 +85,7 @@ else
     echo -e "$(timestamp) [INFO] Products are already loaded...${Y}SKIPPING${N}"
 fi
 
-systemctl restart catalogue
+systemctl restart catalogue &>> $logs_file
 validate $? "Restarting Catalogue"
 
 echo "$(timestamp) [INFO] Script completed in $SECONDS seconds"
