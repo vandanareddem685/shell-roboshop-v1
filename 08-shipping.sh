@@ -5,7 +5,6 @@ logs_folder="/var/log/roboshop"
 logs_file="${logs_folder}/${0}.log"
 domain_name="practicedaws92s.online"
 scripts_dir=$(dirname "$(realpath "$0")")
-
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
@@ -18,7 +17,7 @@ fi
 
 mkdir -p $logs_folder
 
-timestamp(){  
+timestamp(){
     date "+%F %T" 
 }
 
@@ -35,15 +34,15 @@ echo "$(timestamp) [INFO] ==== Script started Execution =====" | tee -a $logs_fi
 
 dnf module enable maven:3.9 -y &>> $logs_file
 dnf install maven java-25-openjdk-devel -y &>> $logs_file
-validate $? "Installing java and maven"
+validate $? "Installing Java and Maven"
 
-alternatives --set java /usr/lib/jvm/java-25-openjdk/bin/java
-validate $? "setting java 25 as default java version"
+alternatives --set java "/usr/lib/jvm/java-25-openjdk/bin/java"
+validate $? "Setting Java 25 as default Java version"
 
 echo "export JAVA_HOME=$(dirname $(dirname $(readlink -f /usr/bin/java)))" > /etc/profile.d/java.sh
 source /etc/profile.d/java.sh
 echo $JAVA_HOME
-validate $? "setting JAVA_HOME for maven"
+validate $? "Setting JAVA_HOME for maven"
 
 id roboshop &>> $logs_file
 if [ $? -ne 0 ]; then
@@ -66,34 +65,34 @@ cd /app
 unzip /tmp/shipping.zip &>> $logs_file
 validate $? "Unzipping shipping"
 
-cd /app
 mvn clean package &>> $logs_file
 validate $? "Installing dependencies"
 
 mv target/shipping.jar shipping.jar
-validate $? "moving shippingjar file"
+validate $? "Moving shipping.jar file"
 
 sed -i "s/DOMAIN_NAME/$domain_name/g" "$scripts_dir/shipping.service"
 cp "$scripts_dir/shipping.service" /etc/systemd/system/shipping.service
 
 dnf install mysql -y &>> $logs_file
-validate $? "installing mysql client"
+validate $? "Installing MySQL client"
 
-COUNT=$(mysql -h mysql.$domain_name -u root -pRobosho@1 -N -B -e "SELECT COUNT(*) FROM cities.cities;" 2>> $logs_file)
-if [ -z "$COUNT"] || [ "$COUNT" -eq 0 ];then
+count=$(mysql -h "mysql.$domain_name" -u root -pRoboShop@1 -N -B -e "SELECT COUNT(*) FROM cities.cities;" 2>> $logs_file )
+if [ -z "$count" ] || [ "$count" -eq 0 ]; then
     mysql -h "mysql.$domain_name" -uroot -pRoboShop@1 < /app/db/master-data.sql
-    valdiate $? "loading shipping data"
+    validate $? "Loading shipping data"
 else
-    echo -e "$(timestamp)[INFO] Master Data aleady loaded .. ${Y}SKIPPING{N}"
+    echo -e "$(timestamp) [INFO] Master data already loaded...${Y}SKIPPING${N}"
 fi
 
-mysql -h mysql.$domain_name -uroot -pRoboShop@1 < /app/db/app-user.sql
-validate $? "creating APP user"
+mysql -h "mysql.$domain_name" -uroot -pRoboShop@1 < /app/db/app-user.sql
+validate $? "Creating APP user"
 
 systemctl daemon-reload &>> $logs_file
 systemctl enable shipping &>> $logs_file
-systemctl restart shipping &>> $logs_file
-validate $? "Starting and enabling shipping"
+systemctl restart shipping
+validate $? "Restarting/Starting shipping"
+
 
 echo "$(timestamp) [INFO] Script completed in $SECONDS seconds"
 echo "$(timestamp) [INFO] ==== Script completed Execution =====" | tee -a $logs_file
