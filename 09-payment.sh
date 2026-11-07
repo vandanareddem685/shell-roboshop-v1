@@ -57,10 +57,10 @@ cd /app
 unzip /tmp/payment.zip &>> $logs_file
 validate $? "Unzipping payment"
 
-python3.14 -m venv /app/.venv
+python3.14 -m venv /app/.venv &>> $logs_file
 validate $? "creating virtual environment"
 
-/app/.venv/bin/pip install -r requirements.txt
+/app/.venv/bin/pip install -r requirements.txt &>> $logs_file
 validate $? "installing dependencies"
 
 sed -i "s/DOMAIN_NAME/$domain_name/g" "$scripts_dir/payment.service"
