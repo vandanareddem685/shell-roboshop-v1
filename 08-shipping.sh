@@ -67,7 +67,7 @@ unzip /tmp/shipping.zip &>> $logs_file
 validate $? "Unzipping shipping"
 
 cd /app
-mvn clean package
+mvn clean package &>> $logs_file
 validate $? "Installing dependencies"
 
 mv target/shipping.jar shipping.jar
@@ -76,7 +76,7 @@ validate $? "moving shippingjar file"
 sed -i "s/DOMAIN_NAME/$domain_name/g" "$scripts_dir/shipping.service"
 cp "$scripts_dir/shipping.service" /etc/systemd/system/shipping.service
 
-dnf install mysql -y
+dnf install mysql -y &>> $logs_file
 validate $? "installing mysql client"
 
 COUNT=$(mysql -h mysql.$domain_name -u root -pRobosho@1 -N -B -e "SELECT COUNT(*) FROM cities.cities;" 2>> $logs_file)
