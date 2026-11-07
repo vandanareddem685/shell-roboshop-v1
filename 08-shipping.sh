@@ -92,7 +92,7 @@ validate $? "creating APP user"
 
 systemctl daemon-reload &>> $logs_file
 systemctl enable shipping &>> $logs_file
-systemctl start shipping &>> $logs_file
+systemctl restart shipping &>> $logs_file
 validate $? "Starting and enabling shipping"
 
 echo "$(timestamp) [INFO] Script completed in $SECONDS seconds"
