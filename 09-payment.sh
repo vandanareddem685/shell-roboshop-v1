@@ -5,7 +5,6 @@ logs_folder="/var/log/roboshop"
 logs_file="${logs_folder}/${0}.log"
 domain_name="practicedaws92s.online"
 scripts_dir=$(dirname "$(realpath "$0")")
-
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
@@ -18,7 +17,7 @@ fi
 
 mkdir -p $logs_folder
 
-timestamp(){  
+timestamp(){
     date "+%F %T" 
 }
 
@@ -34,7 +33,7 @@ validate(){
 echo "$(timestamp) [INFO] ==== Script started Execution =====" | tee -a $logs_file
 
 dnf install python3.14 python3.14-pip -y &>> $logs_file
-validate $? "installing python:3.14"
+validate $? "Installing Python 3.14"
 
 id roboshop &>> $logs_file
 if [ $? -ne 0 ]; then
@@ -58,10 +57,10 @@ unzip /tmp/payment.zip &>> $logs_file
 validate $? "Unzipping payment"
 
 python3.14 -m venv /app/.venv &>> $logs_file
-validate $? "creating virtual environment"
+validate $? "Creating virtual environment"
 
 /app/.venv/bin/pip install -r requirements.txt &>> $logs_file
-validate $? "installing dependencies"
+validate $? "Installing dependencies"
 
 sed -i "s/DOMAIN_NAME/$domain_name/g" "$scripts_dir/payment.service"
 cp "$scripts_dir/payment.service" /etc/systemd/system/payment.service
@@ -69,7 +68,8 @@ cp "$scripts_dir/payment.service" /etc/systemd/system/payment.service
 systemctl daemon-reload &>> $logs_file
 systemctl enable payment &>> $logs_file
 systemctl restart payment &>> $logs_file
-validate $? "Enable and starting payment"
+validate $? "Starting/Restaring payment"
+
 
 echo "$(timestamp) [INFO] Script completed in $SECONDS seconds"
 echo "$(timestamp) [INFO] ==== Script completed Execution =====" | tee -a $logs_file
