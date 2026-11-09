@@ -5,7 +5,6 @@ logs_folder="/var/log/roboshop"
 logs_file="${logs_folder}/${0}.log"
 domain_name="practicedaws92s.online"
 scripts_dir=$(dirname "$(realpath "$0")")
-
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
@@ -18,7 +17,7 @@ fi
 
 mkdir -p $logs_folder
 
-timestamp(){  
+timestamp(){
     date "+%F %T" 
 }
 
@@ -53,7 +52,7 @@ mkdir -p /app
 validate $? "Creating app directory"
 
 curl -L -o /tmp/cart.zip https://raw.githubusercontent.com/daws-92s/roboshop-documentation/refs/heads/main/artifacts/cart-v4.zip &>> $logs_file
-validate $? "Downloading user"
+validate $? "Downloading cart"
 
 cd /app
 unzip /tmp/cart.zip &>> $logs_file
@@ -63,7 +62,7 @@ npm install &>> $logs_file
 validate $? "Installing dependencies"
 
 sed -i "s/DOMAIN_NAME/$domain_name/g" "$scripts_dir/cart.service"
-cp "$scripts_dir/user.service" /etc/systemd/system/cart.service
+cp "$scripts_dir/cart.service" /etc/systemd/system/cart.service
 
 systemctl daemon-reload &>> $logs_file
 systemctl enable cart &>> $logs_file
